@@ -36,9 +36,6 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZpU-Xo-2WU">
                                 <rect key="frame" x="191.5" y="165" width="31" height="30"/>
                                 <state key="normal" title="計算"/>
-                                <connections>
-                                    <action selector="calculateButtonDidTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="45j-dW-jHd"/>
-                                </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="uEm-WK-X9n">
                                 <rect key="frame" x="20" y="87.5" width="161.5" height="34"/>
@@ -64,6 +61,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="calculateButton" destination="ZpU-Xo-2WU" id="CGX-K4-sDc"/>
                         <outlet property="numberToBeDivideTextField" destination="uEm-WK-X9n" id="Or3-aA-XCT"/>
                         <outlet property="numberToDivideTextField" destination="vbu-nv-6Uj" id="Fpy-MF-fqg"/>
                         <outlet property="resultLabel" destination="fPw-f2-Qks" id="JeZ-Vk-eDx"/>
