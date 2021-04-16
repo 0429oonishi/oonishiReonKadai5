@@ -16,7 +16,7 @@ final class CalculateViewController: UIViewController {
     @IBOutlet private weak var calculateButton: UIButton!
     @IBOutlet private weak var resultLabel: UILabel!
     private let disposeBag = DisposeBag()
-    private let viewModel: ViewModelType = ViewModel()
+    private let viewModel: CalculateViewModelType = CalculateViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,21 +47,21 @@ final class CalculateViewController: UIViewController {
     }
 }
 
-protocol ViewModelInput {
+protocol CalculateViewModelInput {
     func didTapCalculateButton(numberToBeDivideText: String?, numberToDivideText: String?)
 }
 
-protocol ViewModelOutput {
+protocol CalculateViewModelOutput {
     var calculatedText: Driver<String> { get }
-    var event: Driver<ViewModel.Event> { get }
+    var event: Driver<CalculateViewModel.Event> { get }
 }
 
-protocol ViewModelType {
-    var inputs: ViewModelInput { get }
-    var outputs: ViewModelOutput { get }
+protocol CalculateViewModelType {
+    var inputs: CalculateViewModelInput { get }
+    var outputs: CalculateViewModelOutput { get }
 }
 
-class ViewModel: ViewModelInput, ViewModelOutput {
+class CalculateViewModel: CalculateViewModelInput, CalculateViewModelOutput {
     enum Event {
         case showAlert(String)
     }
@@ -94,26 +94,29 @@ class ViewModel: ViewModelInput, ViewModelOutput {
         guard let numberToBeDivideNum = Double(numberToBeDivideText),
               let numberToDivideNum = Double(numberToDivideText) else { return }
 
-        guard !numberToDivideNum.isZero else {
-            eventRelay.accept(.showAlert(CalculateErrorMessage.numberToDivideIsZero))
-            return
+        switch Calculator().divide(numberToBeDivideNum: numberToBeDivideNum, numberToDivideNum: numberToDivideNum) {
+        case let .success(result):
+            calculatedTextRelay.accept(String(result))
+        case let .failure(error):
+            switch error {
+            case .numberToDivideIsZero:
+                eventRelay.accept(.showAlert(CalculateErrorMessage.numberToDivideIsZero))
+            }
         }
-
-        calculatedTextRelay.accept(String(numberToBeDivideNum / numberToDivideNum))
     }
 }
 
-extension ViewModel: ViewModelType {
-    var inputs: ViewModelInput {
+extension CalculateViewModel: CalculateViewModelType {
+    var inputs: CalculateViewModelInput {
         return self
     }
     
-    var outputs: ViewModelOutput {
+    var outputs: CalculateViewModelOutput {
         return self
     }
 }
 
-enum CalculateErrorMessage {
+private enum CalculateErrorMessage {
     static let invalidNumberToBeDivide = "割られる数を入力してください。"
     static let invalidNumberToDivide = "割る数を入力してください。"
     static let numberToDivideIsZero = "割る数には０を入力しないでください。"
@@ -124,5 +127,19 @@ extension UIViewController {
         let alert = UIAlertController(title: "課題5", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
+    }
+}
+
+private class Calculator {
+    enum Error: Swift.Error {
+        case numberToDivideIsZero
+    }
+
+    func divide(numberToBeDivideNum: Double, numberToDivideNum: Double) -> Result<Double, Error> {
+        guard !numberToDivideNum.isZero else {
+            return .failure(.numberToDivideIsZero)
+        }
+
+        return .success(numberToBeDivideNum / numberToDivideNum)
     }
 }
