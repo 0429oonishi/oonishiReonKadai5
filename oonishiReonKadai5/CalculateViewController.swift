@@ -16,80 +16,107 @@ final class CalculateViewController: UIViewController {
     @IBOutlet private weak var calculateButton: UIButton!
     @IBOutlet private weak var resultLabel: UILabel!
     private let disposeBag = DisposeBag()
-    private let viewModel: ViewModelType = ViewModel()
+    private let viewModel: CalculateViewModelType = CalculateViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // MARK: - Input
-        calculateButton.rx.tap
-            .subscribe { _ in
-                guard let numberToBeDivideText = self.numberToBeDivideTextField.text else { return }
-                guard let numberToDivideText = self.numberToDivideTextField.text else { return }
-                guard !numberToBeDivideText.isEmpty else {
-                    self.showAlert(message: CalculateErrorMessage.invalidNumberToBeDivide)
-                    return
-                }
-                guard !numberToDivideText.isEmpty else {
-                    self.showAlert(message: CalculateErrorMessage.invalidNumberToDivide)
-                    return
-                }
-                guard let numberToBeDivideNum = Double(numberToBeDivideText),
-                      let numberToDivideNum = Double(numberToDivideText) else { return }
-                guard !numberToDivideNum.isZero else {
-                    self.showAlert(message: CalculateErrorMessage.numberToDivideIsZero)
-                    return
-                }
-                self.viewModel.inputs.num.onNext(numberToBeDivideNum / numberToDivideNum)
-            }
-            .disposed(by: disposeBag)
-        
-        // MARK: - Output
-        viewModel.outputs.calculatedText
-            .bind(to: resultLabel.rx.text)
-            .disposed(by: disposeBag)
-        
+        setupBindings()
     }
-    
+
+    private func setupBindings() {
+        viewModel.outputs.calculatedText
+            .drive(resultLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.outputs.event
+            .drive(onNext: { [weak self] in
+                switch $0 {
+                case let .showAlert(message):
+                    self?.showAlert(message: message)
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+
+    @IBAction func didTapCalculateButton(_ sender: Any) {
+        viewModel.inputs.didTapCalculateButton(
+            numberToBeDivideText: numberToBeDivideTextField.text,
+            numberToDivideText: numberToDivideTextField.text
+        )
+    }
 }
 
-protocol ViewModelInput {
-    var num: AnyObserver<Double> { get }
+protocol CalculateViewModelInput {
+    func didTapCalculateButton(numberToBeDivideText: String?, numberToDivideText: String?)
 }
 
-protocol ViewModelOutput {
-    var calculatedText: Observable<String> { get }
+protocol CalculateViewModelOutput {
+    var calculatedText: Driver<String> { get }
+    var event: Driver<CalculateViewModel.Event> { get }
 }
 
-protocol ViewModelType {
-    var inputs: ViewModelInput { get }
-    var outputs: ViewModelOutput { get }
+protocol CalculateViewModelType {
+    var inputs: CalculateViewModelInput { get }
+    var outputs: CalculateViewModelOutput { get }
 }
 
-class ViewModel: ViewModelInput, ViewModelOutput {
-    var num: AnyObserver<Double>
-    var calculatedText: Observable<String>
+class CalculateViewModel: CalculateViewModelInput, CalculateViewModelOutput {
+    enum Event {
+        case showAlert(String)
+    }
+
+    let calculatedText: Driver<String>
+    private let calculatedTextRelay = BehaviorRelay<String>(value: "")
+
+    let event: Driver<Event>
+    private let eventRelay = PublishRelay<Event>()
+
     init() {
-        let _calculatedText = PublishRelay<String>()
-        self.calculatedText = _calculatedText.asObservable()
-        self.num = AnyObserver<Double>() { num in
-            let numText = String(num.element!)
-            _calculatedText.accept(numText)
+        calculatedText = calculatedTextRelay.asDriver()
+        event = eventRelay.asDriver(onErrorDriveWith: .empty())
+    }
+
+    func didTapCalculateButton(numberToBeDivideText: String?, numberToDivideText: String?) {
+        guard let numberToBeDivideText = numberToBeDivideText else { return }
+        guard let numberToDivideText = numberToDivideText else { return }
+
+        guard !numberToBeDivideText.isEmpty else {
+            eventRelay.accept(.showAlert(CalculateErrorMessage.invalidNumberToBeDivide))
+            return
+        }
+
+        guard !numberToDivideText.isEmpty else {
+            eventRelay.accept(.showAlert(CalculateErrorMessage.invalidNumberToDivide))
+            return
+        }
+
+        guard let numberToBeDivideNum = Double(numberToBeDivideText),
+              let numberToDivideNum = Double(numberToDivideText) else { return }
+
+        switch Calculator().divide(numberToBeDivideNum: numberToBeDivideNum, numberToDivideNum: numberToDivideNum) {
+        case let .success(result):
+            calculatedTextRelay.accept(String(result))
+        case let .failure(error):
+            switch error {
+            case .numberToDivideIsZero:
+                eventRelay.accept(.showAlert(CalculateErrorMessage.numberToDivideIsZero))
+            }
         }
     }
 }
 
-extension ViewModel: ViewModelType {
-    var inputs: ViewModelInput {
+extension CalculateViewModel: CalculateViewModelType {
+    var inputs: CalculateViewModelInput {
         return self
     }
     
-    var outputs: ViewModelOutput {
+    var outputs: CalculateViewModelOutput {
         return self
     }
 }
 
-enum CalculateErrorMessage {
+private enum CalculateErrorMessage {
     static let invalidNumberToBeDivide = "割られる数を入力してください。"
     static let invalidNumberToDivide = "割る数を入力してください。"
     static let numberToDivideIsZero = "割る数には０を入力しないでください。"
@@ -103,4 +130,16 @@ extension UIViewController {
     }
 }
 
+private class Calculator {
+    enum Error: Swift.Error {
+        case numberToDivideIsZero
+    }
 
+    func divide(numberToBeDivideNum: Double, numberToDivideNum: Double) -> Result<Double, Error> {
+        guard !numberToDivideNum.isZero else {
+            return .failure(.numberToDivideIsZero)
+        }
+
+        return .success(numberToBeDivideNum / numberToDivideNum)
+    }
+}
