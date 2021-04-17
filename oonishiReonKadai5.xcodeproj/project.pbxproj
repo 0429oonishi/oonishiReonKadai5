@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,8 @@
 		AB2425B6262879F200F0FFA8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AB2425B4262879F200F0FFA8 /* Main.storyboard */; };
 		AB2425B8262879F900F0FFA8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB2425B7262879F900F0FFA8 /* Assets.xcassets */; };
 		AB2425BB262879F900F0FFA8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AB2425B9262879F900F0FFA8 /* LaunchScreen.storyboard */; };
+		E55A8E8A262A9F4200EFD6B2 /* CalculateUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E55A8E89262A9F4200EFD6B2 /* CalculateUseCase.swift */; };
+		E55A8E8D262AA18D00EFD6B2 /* CalculateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E55A8E8C262AA18D00EFD6B2 /* CalculateViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 		AB2425BC262879F900F0FFA8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C463C6672E0CE2445485BFAC /* Pods-oonishiReonKadai5.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-oonishiReonKadai5.release.xcconfig"; path = "Target Support Files/Pods-oonishiReonKadai5/Pods-oonishiReonKadai5.release.xcconfig"; sourceTree = "<group>"; };
 		CD1CAF97DAB61677E03673DB /* Pods_oonishiReonKadai5.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_oonishiReonKadai5.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E55A8E89262A9F4200EFD6B2 /* CalculateUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculateUseCase.swift; sourceTree = "<group>"; };
+		E55A8E8C262AA18D00EFD6B2 /* CalculateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculateViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,7 +52,6 @@
 				5310208B35E747EE8AD07665 /* Pods-oonishiReonKadai5.debug.xcconfig */,
 				C463C6672E0CE2445485BFAC /* Pods-oonishiReonKadai5.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -76,6 +79,8 @@
 				AB2425AE262879F200F0FFA8 /* AppDelegate.swift */,
 				AB2425B0262879F200F0FFA8 /* SceneDelegate.swift */,
 				AB2425B2262879F200F0FFA8 /* CalculateViewController.swift */,
+				E55A8E8C262AA18D00EFD6B2 /* CalculateViewModel.swift */,
+				E55A8E89262A9F4200EFD6B2 /* CalculateUseCase.swift */,
 				AB2425B4262879F200F0FFA8 /* Main.storyboard */,
 				AB2425B7262879F900F0FFA8 /* Assets.xcassets */,
 				AB2425B9262879F900F0FFA8 /* LaunchScreen.storyboard */,
@@ -206,7 +211,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E55A8E8A262A9F4200EFD6B2 /* CalculateUseCase.swift in Sources */,
 				AB2425B3262879F200F0FFA8 /* CalculateViewController.swift in Sources */,
+				E55A8E8D262AA18D00EFD6B2 /* CalculateViewModel.swift in Sources */,
 				AB2425AF262879F200F0FFA8 /* AppDelegate.swift in Sources */,
 				AB2425B1262879F200F0FFA8 /* SceneDelegate.swift in Sources */,
 			);
