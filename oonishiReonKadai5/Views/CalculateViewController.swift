@@ -14,6 +14,7 @@ final class CalculateViewController: UIViewController {
     @IBOutlet private weak var numberToDivideTextField: UITextField!
     @IBOutlet private weak var calculateButton: UIButton!
     @IBOutlet private weak var resultLabel: UILabel!
+    
     private let disposeBag = DisposeBag()
     private let calculateViewModel: CalculateViewModelType = CalculateViewModel()
     
@@ -24,22 +25,8 @@ final class CalculateViewController: UIViewController {
         
     }
     
-    private func setupBindings() {
-        calculateViewModel.outputs.calculatedText
-            .drive(resultLabel.rx.text)
-            .disposed(by: disposeBag)
-        
-        calculateViewModel.outputs.event
-            .drive(onNext: { [weak self] in
-                switch $0 {
-                case .showAlert(let message):
-                    self?.showAlert(message: message)
-                }
-            })
-            .disposed(by: disposeBag)
-    }
-    
-    @IBAction func calculateButtonDidTapped(_ sender: Any) {
+    @IBAction private func calculateButtonDidTapped(_ sender: Any) {
+        // ボタンがタップされたことを入力値を添えてViewModelに通知
         calculateViewModel.inputs.calculateButtonDidTapped(
             numberToBeDivideText: numberToBeDivideTextField.text,
             numberToDivideText: numberToDivideTextField.text
@@ -48,3 +35,21 @@ final class CalculateViewController: UIViewController {
     
 }
 
+// MARK: - setup
+private extension CalculateViewController {
+    func setupBindings() {
+        calculateViewModel.outputs.calculatedText
+            .drive(resultLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        calculateViewModel.outputs.event
+            .drive(onNext: { [weak self] event in
+                switch event {
+                    case .showAlert(let message):
+                        // VMからの表示要請に応える
+                        self?.showAlert(message: message)
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+}

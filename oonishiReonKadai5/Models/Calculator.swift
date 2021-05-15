@@ -7,14 +7,17 @@
 
 import Foundation
 
+// Model
 class Calculator {
     enum CalculatorError: Error {
         case numberToDivideIsZero
     }
-    func divide(numberToBeDivideNum: Double, numberToDivideNum: Double) -> Result<Double, CalculatorError> {
+    func divide(numberToBeDivideNum: Double,
+                numberToDivideNum: Double) -> Result<Double, CalculatorError> {
         guard !numberToDivideNum.isZero else {
             return .failure(.numberToDivideIsZero)
         }
+        // 今回のアプリにおいてのビジネスロジック（Modelに書くべき）
         return .success(numberToBeDivideNum / numberToDivideNum)
     }
 }

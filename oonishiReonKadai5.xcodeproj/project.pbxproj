@@ -30,6 +30,7 @@
 		AB2425B7262879F900F0FFA8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AB2425BA262879F900F0FFA8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AB2425BC262879F900F0FFA8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB5779D926503883005BECB9 /* practice.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = practice.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		AB7C811A2629E6C60019691D /* Calculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculator.swift; sourceTree = "<group>"; };
 		AB7C811E2629E6F50019691D /* CalculatorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorViewModel.swift; sourceTree = "<group>"; };
 		AB7C81232629E7380019691D /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
@@ -62,6 +63,7 @@
 		AB2425A2262879F100F0FFA8 = {
 			isa = PBXGroup;
 			children = (
+				AB5779D926503883005BECB9 /* practice.playground */,
 				AB2425AD262879F200F0FFA8 /* oonishiReonKadai5 */,
 				AB2425AC262879F200F0FFA8 /* Products */,
 				52A8BC2B4CBC96971E429A54 /* Pods */,
