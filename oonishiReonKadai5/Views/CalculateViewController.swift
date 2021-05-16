@@ -16,7 +16,10 @@ final class CalculateViewController: UIViewController {
     @IBOutlet private weak var resultLabel: UILabel!
     
     private let disposeBag = DisposeBag()
-    private let calculateViewModel: CalculateViewModelType = CalculateViewModel()
+    // 具体的なUseCaseを注入する
+    private let calculateViewModel: CalculateViewModelType = CalculateViewModel(
+        calculateUseCase: CalculateUseCase()
+    )
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,7 +49,7 @@ private extension CalculateViewController {
             .drive(onNext: { [weak self] event in
                 switch event {
                     case .showAlert(let message):
-                        // VMからの表示要請に応える
+                        // ViewModelからの表示要請に応える
                         self?.showAlert(message: message)
                 }
             })

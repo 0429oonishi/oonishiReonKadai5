@@ -35,44 +35,42 @@ class CalculateViewModel: CalculateViewModelInput,
     let event: Driver<Event>
     private let eventRelay = PublishRelay<Event>()
     
-    init() {
+    // 具体的なUseCase名に依存させず、プロトコルに依存させる
+    private let calculateUseCase: CalculateUseCaseProtocol
+    
+    init(calculateUseCase: CalculateUseCaseProtocol) {
         calculatedText = calculatedTextRelay.asDriver()
         event = eventRelay.asDriver(onErrorDriveWith: .empty())
+        self.calculateUseCase = calculateUseCase
     }
     
     func calculateButtonDidTapped(numberToBeDivideText: String?,
                                   numberToDivideText: String?) {
-        guard let numberToBeDivideText = numberToBeDivideText,
-              let numberToDivideText = numberToDivideText else { return }
+        // 具体的な処理は、UseCaseに任せる
+        let result = calculateUseCase.calculate(
+            numberToBeDivideText: numberToBeDivideText,
+            numberToDivideText: numberToDivideText
+        )
         
-        // Alert表示要求
-        guard !numberToBeDivideText.isEmpty else {
-            eventRelay.accept(.showAlert(CalculatorErrorMessage.invalidNumberToBeDivide))
-            return
-        }
-        
-        // Alert表示要求
-        guard !numberToDivideText.isEmpty else {
-            eventRelay.accept(.showAlert(CalculatorErrorMessage.invalidNumberToDivide))
-            return
-        }
-        guard let numberToBeDivideNum = Double(numberToBeDivideText),
-              let numberToDivideNum = Double(numberToDivideText) else { return }
-        
-        // ビジネスロジックはModelにやらせる
-        switch Calculator().divide(numberToBeDivideNum: numberToBeDivideNum,
-                                   numberToDivideNum: numberToDivideNum) {
-            case .success(let result):
-                // 計算実行通知
-                calculatedTextRelay.accept(String(result))
+        // UseCaseからの出力を適切に変換し、ViewへのBindingをするための出力
+        switch result {
+            case .success(let value):
+                calculatedTextRelay.accept(String(value))
             case .failure(let error):
                 switch error {
+                    case .numberToBeDivideTextIsNil,
+                         .numberToDivideTextIsNil,
+                         .numberToDivideNumIsNotNumber,
+                         .numberToBeDivideNumIsNotNumber:
+                        break
+                    case .numberToBeDivideTextIsEmpty:
+                        eventRelay.accept(.showAlert(CalculatorErrorMessage.invalidNumberToBeDivide))
+                    case .numberToDivideTextIsEmpty:
+                        eventRelay.accept(.showAlert(CalculatorErrorMessage.invalidNumberToDivide))
                     case .numberToDivideIsZero:
-                        // Alert表示要求
                         eventRelay.accept(.showAlert(CalculatorErrorMessage.numberToDivideIsZero))
                 }
         }
-        
     }
     
 }
@@ -85,6 +83,12 @@ extension CalculateViewModel: CalculateViewModelType {
     var outputs: CalculateViewModelOutput {
         return self
     }
+}
+
+private enum CalculatorErrorMessage {
+    static let invalidNumberToBeDivide = "割られる数を入力してください。"
+    static let invalidNumberToDivide = "割る数を入力してください。"
+    static let numberToDivideIsZero = "割る数には０を入力しないでください。"
 }
 
 
